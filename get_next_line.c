@@ -15,13 +15,9 @@ ssize_t read(int fildes, void *buf, size_t nbyte);
 
 
 O_RDONLY: In read-only mode, open the file.
-
 O_WRONLY: In a write-only mode, open the file
-
 O_RDWR: Open the file in reading and write mode
-
 O_CREAT: This flag is applied to create a file if it doesn’t exist in the specified path or directory
-
 O_EXCL: Prevents the file creation if it already exists in the directory or location. 
 
 Usage:
@@ -31,6 +27,47 @@ line = get_next_line(fd1);
 
 chars_left stores the leftover characters that were read from the file but not yet returned as a line
 buffer_line: temporary memory storage used to store data while it’s being transferred, processed, or waiting to be used.
+
+### Illustration
+Sample File:
+line1\nline2\n\0
+
+Variables:
+[static variable] char *characters_left
+[malloc in get_next_line] char *buffer_line (malloc(buffer_size + 1))
+[local variable in get_next_line] char *local_line
+
+Steps:
+1. [in fill_buffer_line] Fill the buffer_line with the buffer_size (e.g. 5)
+(characters_left may already contain data from a previous call.)
+characters_left = ""
+buffer_line = "line1"
+local_line = ""
+
+2. [in fill_buffer_line] If characters_left is empty, depulicate an empty string to it. Concantente buffer_line to characters_left to it.
+characters_left = "line1"
+buffer_line = "line1"
+local_line = ""
+
+3. [in fill_buffer_line] Repeat steps 1 and 2 until the line contains \n or \0
+characters_left = "line1\nline"
+buffer_line = "\nline"
+local_line = ""
+
+4. [in get_next_line] Return the characters_left, set it to local line, and free buffer_line memory
+characters_left = "line1\nline"
+buffer_line = ""
+local_line = "line1\nline"
+
+5. [in set_line] Set characters_left to a substring which starts from the end of the previous line
+characters_left = "line"
+buffer_line = ""
+local_line = "line1\nline"
+
+6. [in set_line] Get a line from characters_left ending with \n or \0 (by setting \0 at the end of string)
+characters_left = "line"
+buffer_line = ""
+local_line = "line1\n\0"
 
 Functions
 1. get_next_line

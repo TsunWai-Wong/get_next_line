@@ -6,7 +6,7 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:18:46 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/15 15:41:34 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/15 15:47:17 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 
 static char	*read_buffer_line(int fd, char *buffer_line, char *chars_left)
 {
-	int	byte_read;
+	int		byte_read;
+	char	*temp_str;
 
 	while (1)
 	{
@@ -26,7 +27,9 @@ static char	*read_buffer_line(int fd, char *buffer_line, char *chars_left)
 		buffer_line[byte_read] = '\0';
 		if (!chars_left)
 			chars_left = ft_strdup("");
-		chars_left = ft_strjoin(chars_left, buffer_line);
+		temp_str = chars_left;
+		chars_left = ft_strjoin(temp_str, buffer_line);
+		free(temp_str);
 		if (ft_strrchr(buffer_line, '\n'))
 			break ;
 	}

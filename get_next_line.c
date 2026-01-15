@@ -6,7 +6,7 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:18:46 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/15 14:51:16 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/15 15:41:34 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,13 @@
 // For development
 #include <stdio.h>
 
-char	*read_buffer_line(int fd, char *buffer_line, char *chars_left)
+static char	*read_buffer_line(int fd, char *buffer_line, char *chars_left)
 {
 	int	byte_read;
 
 	while (1)
 	{
 		byte_read = read(fd, buffer_line, BUFFER_SIZE);
-		printf("byte_read: %d\n", byte_read);
-		printf("chars_left: %s\n", chars_left);
 		if (byte_read <= 0)
 			return (chars_left);
 		buffer_line[byte_read] = '\0';
@@ -35,11 +33,13 @@ char	*read_buffer_line(int fd, char *buffer_line, char *chars_left)
 	return (chars_left);
 }
 
-char	*prepare_next_line(char *line)
+static char	*prepare_next_line(char *line)
 {
 	int		i;
 	char	*chars_remain;
 
+	if (!line)
+		return (NULL);
 	i = 0;
 	while (line[i] && line[i] != '\n')
 		i++;
@@ -68,7 +68,7 @@ char	*get_next_line(int fd)
 
 /* int	main()
 {
-	int	fd = open("README.md", O_RDONLY);
+	int	fd = open("onechar.txt", O_RDONLY);
 	printf("Line 1: %s", get_next_line(fd));
 	printf("Line 2: %s", get_next_line(fd));
 	printf("Line 3: %s", get_next_line(fd));

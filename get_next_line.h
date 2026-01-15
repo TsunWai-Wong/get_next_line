@@ -6,12 +6,16 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:17:41 by tswong            #+#    #+#             */
-/*   Updated: 2025/12/15 17:32:14 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/15 14:46:09 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 48
+# endif
 
 # include <fcntl.h>
 # include <unistd.h>

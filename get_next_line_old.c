@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_old.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:18:46 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/19 17:11:36 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/19 15:24:46 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	read_buffer_line(int fd, char *buffer_line, char **chars_left)
 	char	*current_chars_left;
 
 	byte_read = 1;
-	while (byte_read > 0 && *chars_left && !ft_strchr(*chars_left, '\n'))
+	while (!ft_strchr(*chars_left, '\n') && byte_read > 0)
 	{
 		byte_read = read(fd, buffer_line, BUFFER_SIZE);
 		if (byte_read < 0)
@@ -33,15 +33,11 @@ static void	read_buffer_line(int fd, char *buffer_line, char **chars_left)
 			*chars_left = NULL;
 			return ;
 		}
-		if (byte_read == 0)
-			return ;
 		buffer_line[byte_read] = '\0';
 		current_chars_left = *chars_left;
 		*chars_left = ft_strjoin(current_chars_left, buffer_line);
 		free(current_chars_left);
 		current_chars_left = NULL;
-		if (!*chars_left)
-			return ;
 	}
 }
 
@@ -58,20 +54,7 @@ static char	*extract_next_line(char **text)
 		while ((*text)[i] && (*text)[i] != '\n')
 			i++;
 		line = ft_substr(*text, 0, i + 1);
-		if (!line)
-		{
-			free(*text);
-			*text = NULL;
-			return (NULL);
-		}
 		chars_remain = ft_strdup(*text + i + 1);
-		if (!chars_remain)
-		{
-			free(line);
-			free(*text);
-			*text = NULL;
-			return (NULL);
-		}
 		free(*text);
 		*text = chars_remain;
 	}
@@ -93,19 +76,10 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!chars_left)
-	{
 		chars_left = ft_strdup("");
-		if (!chars_left)
-			return (NULL);
-	}
 	buffer_line = malloc(BUFFER_SIZE + 1);
 	if (!buffer_line)
-	{
-		// keep this to solve NULL_CHECK
-		free(chars_left);
-		chars_left = NULL; 
 		return (NULL);
-	}
 	read_buffer_line(fd, buffer_line, &chars_left);
 	free(buffer_line);
 	buffer_line = NULL;

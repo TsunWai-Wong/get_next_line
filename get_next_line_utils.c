@@ -6,7 +6,7 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:50:20 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/15 14:50:23 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/19 13:00:22 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,18 +69,18 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (result);
 }
 
-char	*ft_strrchr(const char *s, int c)
+char	*ft_strchr(const char *s, int c)
 {
-	size_t			i;
+	int				i;
 	unsigned char	uc;
 
+	i = 0;
 	uc = (unsigned char) c;
-	i = ft_strlen(s);
-	while (i > 0)
+	while (s[i])
 	{
 		if (s[i] == uc)
 			return ((char *) &s[i]);
-		i--;
+		i++;
 	}
 	if (s[i] == uc)
 		return ((char *) &s[i]);

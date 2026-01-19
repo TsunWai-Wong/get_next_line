@@ -1,104 +1,95 @@
 _This project has been created as part of the 42 curriculum by tswong_
 
-
 ### Description
+The aim of this project is to make a function that returns a line by reading from a file descriptor.
 
+The function uses functions including read, malloc, and free. It is able to handles files and standard input. It can manage newlines, errors, and end-of-file correctly and efficiently.
 
 ### Instructions
 
+1. Include the header in your file
+```
+#include "get_next_line.h"
+```
+
+2. when compiling your code, add the source files and the required flag. There is only one optional flag called BUFFER_SIZE to control the buffer size to read each time.
+```
+cc main.c get_next_line.c get_next_line_utils.c -D BUFFER_SIZE=<size>
+```
 
 ### Resources
 
+A tutorial session: https://medium.com/@lannur-s/gnl-c3cff1ee552b
+Reading file in C: https://www.educative.io/answers/read-data-from-a-file-using-read-in-c
+Macros and its types in C: https://www.geeksforgeeks.org/c/macros-and-its-types-in-c-cpp/
+
+AI was used for me to clarify some concepts including Macro in C, memory management, different flags for opening files, and etc.
+
 ### Detailed Explanation
 
-int open (const char* path, int flags [, int mode ]);
-ssize_t read(int fildes, void *buf, size_t nbyte);
+##### Detailed explanation and justification of the algorithm
 
+1. Keep reading the file with a certain buffer size. After each time of read, fill the text we just read to chars_left. The reading process stops when we encounter a '\n' character inside chars_left.
 
-O_RDONLY: In read-only mode, open the file.
-O_WRONLY: In a write-only mode, open the file
-O_RDWR: Open the file in reading and write mode
-O_CREAT: This flag is applied to create a file if it doesn’t exist in the specified path or directory
-O_EXCL: Prevents the file creation if it already exists in the directory or location. 
+2. Extract the line (which ends with a '\n' character) from chars_left. Then we update chars_left as the remaining text. 
 
-Usage:
-fd1 = open("tests/test.txt", O_RDONLY);
-line = get_next_line(fd1);
+3. When the user wants to get the 2nd line and so on, if there is still '\n' character in the chars_left. Otherwise, we will repeat everthing from step 1.
 
+##### Variables
+- chars_left: stores the leftover characters that were read from the file but not yet returned as a line
+- buffer_line: temporary memory storage used to store data while it’s being transferred, processed, or waiting to be used.
 
-chars_left stores the leftover characters that were read from the file but not yet returned as a line
-buffer_line: temporary memory storage used to store data while it’s being transferred, processed, or waiting to be used.
-
-### Illustration
-Sample File:
+##### Sample Steps
+sample_file.txt:
 line1\nline2\n\0
 
 Variables:
-[static variable] char *chars_left
-[malloc in get_next_line] char *buffer_line (malloc(buffer_size + 1))
-[local variable in get_next_line] char *local_line
+- char *chars_left: static variable across all functions
+- char *buffer_line: local variable (malloc) in get_next_line
+- char *line: local variable in extract_next_line
 
 Steps:
 1. [in fill_buffer_line] Fill the buffer_line with the buffer_size (e.g. 5)
 (chars_left may already contain data from a previous call.)
 chars_left = ""
 buffer_line = "line1"
-local_line = ""
+line = ""
 
 2. [in fill_buffer_line] If chars_left is empty, depulicate an empty string to it. Concantente buffer_line to chars_left to it.
 chars_left = "line1"
 buffer_line = "line1"
-local_line = ""
+line = ""
 
 3. [in fill_buffer_line] Repeat steps 1 and 2 until the line contains \n or \0
 chars_left = "line1\nline"
 buffer_line = "\nline"
-local_line = ""
+line = ""
 
-4. [in get_next_line] Return the chars_left, set it to local line, and free buffer_line memory
+4. [in get_next_line] Update the chars_left and free buffer_line memory
 chars_left = "line1\nline"
 buffer_line = ""
-local_line = "line1\nline"
+line = ""
 
-5. [in set_line] Set chars_left to a substring which starts from the end of the previous line
+5. [in extract_next_line] Return the extracted next line, and set chars_left to the remaining characters
 chars_left = "line"
 buffer_line = ""
-local_line = "line1\nline"
+line = "line1\n"
 
-6. [in set_line] Get a line from chars_left ending with \n or \0 (by setting \0 at the end of string)
-chars_left = "line"
-buffer_line = ""
-local_line = "line1\n\0"
+6. If chars_left still contains one or more '\n' character, repeat from step 5. Otherwise, repeat from step 1.
 
-Functions
-1. get_next_line
-Input: fd
-Output: char *next_line
+##### Other Concepts
 
-static int current_position = 0
-buffer_line = malloc(BUFFER_SIZE + 1)
-[string_left = ??]
-local_line = fill_buffer_line(fd, chars_left, buffer_line)
-free(buffer_line)
-next_line = set_line(buffer_line)
-free(buffer_line)
-if !local_line return (NULL)
-string_left = set_line(local_line)
-return local_line
+Dangling pointer
+A dangling pointer pointed to memory that does not exist. For example, after the pointer is freed.
+To solve it, we have to set the variable to NULL after freeing it. For example:
+```
+free(*chars_left);
+*chars_left = NULL;
+```
 
-
-2. fill_buffer_line
-(read fd of a certain buffer size, keep doing this and add to chars_left until find \n or \0 inside the new buffer)
-Input: int fd, char *chars_left, char *buffer_line
-Output:
-
-if fd = -1, there is an error
-while (i < buffer_size)
-	if (c = \n or \0), break
-
-3. set_line
-(read the line which contain \n (but maybe not as the last symbol)))
-Input: char *buffer_line
-Output: substring of the line
-\n: end of line
-\0: end of file
+Flags for opening files
+O_RDONLY: In read-only mode, open the file.
+O_WRONLY: In a write-only mode, open the file
+O_RDWR: Open the file in reading and write mode
+O_CREAT: This flag is applied to create a file if it doesn’t exist in the specified path or directory
+O_EXCL: Prevents the file creation if it already exists in the directory or location. 

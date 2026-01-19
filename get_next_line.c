@@ -6,7 +6,7 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:18:46 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/19 17:11:36 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/19 18:26:39 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 // For development
 #include <stdio.h>
 
-// Dangling pointer: pointer pointed to memory that does not exist. 
-// For example, after the pointer is freed
+
 
 // if there is problem in the file or there is nothing left to read
 static void	read_buffer_line(int fd, char *buffer_line, char **chars_left)
@@ -52,35 +51,26 @@ static char	*extract_next_line(char **text)
 	char	*line;
 	char	*chars_remain;
 
-	if (ft_strchr(*text, '\n'))
-	{
-		i = 0;
-		while ((*text)[i] && (*text)[i] != '\n')
-			i++;
-		line = ft_substr(*text, 0, i + 1);
-		if (!line)
-		{
-			free(*text);
-			*text = NULL;
-			return (NULL);
-		}
-		chars_remain = ft_strdup(*text + i + 1);
-		if (!chars_remain)
-		{
-			free(line);
-			free(*text);
-			*text = NULL;
-			return (NULL);
-		}
-		free(*text);
-		*text = chars_remain;
-	}
-	else
+	if (!ft_strchr(*text, '\n'))
 	{
 		line = ft_strdup(*text);
 		free(*text);
 		*text = NULL;
+		return (line);
 	}
+	i = 0;
+	while ((*text)[i] && (*text)[i] != '\n')
+		i++;
+	line = ft_substr(*text, 0, i + 1);
+	if (!line)
+	{
+		free(*text);
+		*text = NULL;
+		return (NULL);
+	}
+	chars_remain = ft_strdup(*text + i + 1);
+	free(*text);
+	*text = chars_remain;
 	return (line);
 }
 
@@ -88,35 +78,27 @@ char	*get_next_line(int fd)
 {
 	static char	*chars_left;
 	char		*buffer_line;
-	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!chars_left)
-	{
 		chars_left = ft_strdup("");
-		if (!chars_left)
-			return (NULL);
-	}
 	buffer_line = malloc(BUFFER_SIZE + 1);
 	if (!buffer_line)
 	{
-		// keep this to solve NULL_CHECK
 		free(chars_left);
 		chars_left = NULL; 
 		return (NULL);
 	}
 	read_buffer_line(fd, buffer_line, &chars_left);
 	free(buffer_line);
-	buffer_line = NULL;
 	if (!chars_left || chars_left[0] == '\0')
 	{
 		free(chars_left);
 		chars_left = NULL;
 		return (NULL);
 	}
-	line = extract_next_line(&chars_left);
-	return (line);
+	return (extract_next_line(&chars_left));
 }
 
 /* int	main()

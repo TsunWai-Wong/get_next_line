@@ -6,17 +6,12 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:18:46 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/19 18:26:39 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/19 18:48:14 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-// For development
-#include <stdio.h>
 
-
-
-// if there is problem in the file or there is nothing left to read
 static void	read_buffer_line(int fd, char *buffer_line, char **chars_left)
 {
 	int		byte_read;
@@ -44,7 +39,6 @@ static void	read_buffer_line(int fd, char *buffer_line, char **chars_left)
 	}
 }
 
-// Handle the remaining text without \n at the end
 static char	*extract_next_line(char **text)
 {
 	int		i;
@@ -100,24 +94,3 @@ char	*get_next_line(int fd)
 	}
 	return (extract_next_line(&chars_left));
 }
-
-/* int	main()
-{
-	int	fd = open("text.txt", O_RDONLY);
-	printf("Line 1: %s", get_next_line(fd));
-	printf("Line 2: %s", get_next_line(fd));
-	printf("Line 3: %s", get_next_line(fd));
-	printf("Line 4: %s", get_next_line(fd));
-	printf("Line 5: %s", get_next_line(fd));
-	printf("Line 6: %s", get_next_line(fd));
-	printf("Line 7: %s", get_next_line(fd));
-	printf("Line 8: %s", get_next_line(fd));
-	printf("Line 9: %s", get_next_line(fd));
-	printf("Line 10: %s", get_next_line(fd));
-	printf("Line 11: %s", get_next_line(fd));
-	printf("Line 12: %s", get_next_line(fd));
-	printf("Line 13: %s", get_next_line(fd));
-	printf("Line 14: %s", get_next_line(fd));
-	printf("Line 15: %s", get_next_line(fd));
-	return (0);
-} */

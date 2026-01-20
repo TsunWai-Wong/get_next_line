@@ -6,7 +6,7 @@
 /*   By: tswong <tswong@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:18:46 by tswong            #+#    #+#             */
-/*   Updated: 2026/01/19 18:48:14 by tswong           ###   ########.fr       */
+/*   Updated: 2026/01/20 10:28:23 by tswong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ static void	read_buffer_line(int fd, char *buffer_line, char **chars_left)
 		*chars_left = ft_strjoin(current_chars_left, buffer_line);
 		free(current_chars_left);
 		current_chars_left = NULL;
-		if (!*chars_left)
-			return ;
 	}
 }
 
